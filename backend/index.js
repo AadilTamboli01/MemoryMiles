@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import connectionDB from "./Lib/ConnectDB.js";
 import authRouter from "./routes/auth.route.js"
 import userRouter from "./routes/user.route.js"
+import storyRouter from "./routes/story.route.js"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 dotenv.config();
