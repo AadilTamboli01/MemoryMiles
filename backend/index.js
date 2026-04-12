@@ -1,10 +1,18 @@
 import express from "express"
 import dotenv from "dotenv"
 import connectionDB from "./Lib/ConnectDB.js";
+import authRouter from "./routes/auth.route.js"
 import cors from "cors"
 dotenv.config();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 connectionDB()
+
+
 const app = express();
+
+app.use("/api/auth",authRouter);
 app.get("/", (req, res) => {
     res.send("request on root")
 })
