@@ -8,7 +8,7 @@ export const addStory = async (req, res) => {
 
         // verify required field 
         if (!title || !story || !visitedDate || !imageURL || !visitedLocation) {
-            return res.status(400).json({ success: false, message: "All Fields are required  " })
+            return res.status(400).json({ success: false, message: "Please fill in all the required fields. " })
         }
 
         // convert visited date 
@@ -17,9 +17,14 @@ export const addStory = async (req, res) => {
             visitedDate: parsedVisitedDate, title, story, imageURL, visitedLocation, userId
         })
         await newStory.save();
-        res.status(201).json({ success: true, message: " New story created " })
-    } catch (error) {
-        console.log("error occure in the addstory")
+        res.status(201).json({ success: true, message: "Story saved successfully. " })
+    } catch (err) {
+        console.error("Error in addStory:", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
 
@@ -29,8 +34,13 @@ export const getAllStory = async (req, res) => {
 
         const allstory = (await Story.find({ userId })).sort({ isFavourite: -1 })
         res.status(200).json({ stories: allstory })
-    } catch (error) {
-        console.log("Error Occure in the get all story controller ")
+    } catch (err) {
+        console.error("Error in getAll Story:", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
 
@@ -38,7 +48,7 @@ export const imageUpload = async (req, res) => {
     try {
         // checking for file is uploaded or not 
         if (!req.file) {
-            return res.status(400).json({ message: "No file uploaded" });
+            return res.status(400).json({ message: "No file selected. Please choose a file." });
         }
 
         //  upload to cloudinary
@@ -50,7 +60,7 @@ export const imageUpload = async (req, res) => {
                 }
 
                 return res.status(200).json({
-                    message: "Uploaded successfully",
+                    message: "File uploaded successfully.",
                     ImageURL: result.secure_url,
                 });
             }
@@ -60,7 +70,12 @@ export const imageUpload = async (req, res) => {
         stream.end(req.file.buffer);
 
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Error in imageUpload:", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
 
@@ -73,7 +88,7 @@ export const editStory = async (req, res) => {
 
         // verify required field 
         if (!title || !story || !visitedDate || !imageURL || !visitedLocation) {
-            return res.status(400).json({ success: false, message: "All Fields are required  " })
+            return res.status(400).json({ success: false, message: "Please fill in all the required fields." })
         }
 
         // convert visited date 
@@ -88,9 +103,14 @@ export const editStory = async (req, res) => {
         travelStory.visitedDate = parsedVisitedDate;
 
         await travelStory.save()
-        res.status(200).json({ success: true, story: travelStory, message: "story updated Successfully !" })
-    } catch (error) {
-        console.log("Error occure in the edit story controller ")
+        res.status(200).json({ success: true, story: travelStory, message: "story updated Successfully." })
+    } catch (err) {
+        console.error("Error in editStory:", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
 
@@ -115,9 +135,14 @@ export const deleteStory = async (req, res) => {
 
         await Story.deleteOne({ _id: id, userId: userId });
 
-        return res.status(200).json({ success: true, message: "stroy deleted" })
-    } catch (error) {
-        console.log("Error occure in the dleted story controller ")
+        return res.status(200).json({ success: true, message: "Story deleted Successfully" })
+    } catch (err) {
+        console.error("Error in deleteStory:", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
 
@@ -133,11 +158,16 @@ export const isFavouriteStory = async (req, res) => {
         }
 
         travelStory.isFavourite = isFavourite;
-        return res.status(200).json({ success: false, message: "TravelStory Updated" })
+        return res.status(200).json({ success: false, message: "TravelStory Updated successfully" })
 
 
-    } catch (error) {
+    } catch (err) {
+        console.error("Error in isfavourite:", err); // for debugging
 
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
 
@@ -153,8 +183,13 @@ export const searchStory = async (req, res) => {
         const searchResults = Story.find({ userId: userId, $or: [{ title: { $regex: query, $options: "i" } }, { story: { $regex: query, $options: "i" } }, { visitedLocation: { $regex: query, $options: "i" } }] }).sort({ isFavourite: -1 })
         res.status(200).json({ success: true, stories: searchResults })
 
-    } catch (error) {
-        console.log("Error in the searchStory controller");
+    } catch (err) {
+        console.error("Error in searchHistory:", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
 
@@ -166,10 +201,15 @@ export const filterTravelStory = async (req, res) => {
         const start = new Date(parsInt(startDate))
         const end = new Date(parsInt(endDate))
 
-        const filteredStories = await Story({ userId: userId, visitedDate: { $gte: start, $lte: end } }).sort({isFavourite:-1})
+        const filteredStories = await Story({ userId: userId, visitedDate: { $gte: start, $lte: end } }).sort({ isFavourite: -1 })
 
-        res.status(200).json({success:true , stories : filteredStories})
-    } catch (error) {
-        console.log("Error in the filet story conterolle")
+        res.status(200).json({ success: true, stories: filteredStories })
+    } catch (err) {
+        console.error("Error in filterStory:", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }

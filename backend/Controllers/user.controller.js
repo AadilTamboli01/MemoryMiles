@@ -5,12 +5,36 @@ export const getUser = async (req, res) => {
 
         const user = User.findOne({ _id: userId }).select("-password");
         if (!user) {
-            return res.json(404).json("UnAuthorized")
+            return res.json(404).json("Unauthorized access.")
         }
 
         res.status(200).json({ success: true, data: user });
 
+    } catch (err) {
+        console.error("Error in getUser ", err); // for debugging
+
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
+    }
+}
+
+export const signout = async (req, res) => {
+    try {
+
+        res.clearCookie("token", {
+            httpOnly: true,
+            // secure: true, // only if you're using HTTPS
+            sameSite: "strict"
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Logged out successfully."
+        });
+
     } catch (error) {
-        console.log("Error in the get user controller ")
+
     }
 }
