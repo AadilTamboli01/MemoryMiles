@@ -49,7 +49,8 @@ export const login = async (req, res) => {
             secure: true,        // sirf HTTPS me chalega
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
-        res.status(200).json({ success: true, message: "User Loggedin SuccessFully" });
+        const { password: pass, ...rest } = user._doc
+        res.status(200).json(rest);
     } catch (err) {
         console.log("error occure in the signup controller ")
     }

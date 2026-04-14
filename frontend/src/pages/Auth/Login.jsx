@@ -4,8 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { validateEmail } from '../../utils/helper.js';
 
 import axiosInstance from '../../utils/axiosInstance.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { signInStart, signInSuccess } from '../../redux/slice/userSlice.js';
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const { loading } = useSelector((state) => { return state.user })
   const [email, setEmail] = useState("");
 
   const [password, setPassword] = useState("");
@@ -27,18 +31,20 @@ const Login = () => {
 
     // login api call 
     try {
+      dispatch(signInStart())
       const respose = await axiosInstance.post("/auth/login", { email, password })
 
       if (respose.data) {
+        dispatch(signInSuccess(respose.data))
         navigate("/")
       }
     } catch (error) {
       // setError(error.message)
-       if (error.response) {
+      if (error.response) {
         setError(error.response.data.message || error.response.data)
-    } else {
+      } else {
         setError(error.message)
-    }
+      }
     }
   }
 
@@ -72,12 +78,14 @@ const Login = () => {
             <PasswordInput value={password} onChange={(e) => { setPassword(e.target.value) }} />
 
             {error && <p className='text-red-500'>{error}</p>}
-            <button
+
+            {loading ? (<span className='animate-pulse w-full text-center'>Loading ....</span>) : <button
               type='submit'
               className='btn-primary'
             >
               Login
-            </button>
+            </button>}
+
 
             <p className='text-xs text-slate-500 text-center my-4'>Or</p>
 
