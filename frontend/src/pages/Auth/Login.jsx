@@ -91,7 +91,7 @@ const Login = () => {
 
             <button
               type='button'
-              onClick={() => { navigate("signup") }}
+              onClick={() => { navigate("/signup") }}
               className='btn-primary btn-light'
             >
               Create Account

@@ -10,6 +10,11 @@ export const signup = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const user = await User.findOne({email})
+        if(user){
+            return res.status(400).json({ status: false, message: "User already exist with this email  !" });
+        }
+
         const newUser = new User({ username, email, password: hashedPassword });
         await newUser.save();
         const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY);
