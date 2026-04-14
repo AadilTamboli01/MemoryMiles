@@ -6,7 +6,7 @@ import Login from './pages/Auth/Login'
 
 const App = () => {
   return (
-    <div className='text-red-400'>
+    <div className=''>
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/login'element={<Login/>} />

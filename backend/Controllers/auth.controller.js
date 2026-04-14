@@ -10,8 +10,15 @@ export const signup = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const newUser = new User({ username, email, hashedPassword });
+        const newUser = new User({ username, email, password: hashedPassword });
         await newUser.save();
+        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY);
+
+        res.cookie("token", token, {
+            httpOnly: true,      // JS se access nahi hoga (secure)
+            secure: true,        // sirf HTTPS me chalega
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
 
         res.status(201).json({ success: true, message: "User Created SuccessFully" });
     } catch (err) {
@@ -25,7 +32,7 @@ export const login = async (req, res) => {
             return res.status(400).json({ status: false, message: "All field are required !" });
         }
 
-        let user = User.findOne({ email }).select("-password")
+        let user = await User.findOne({ email })
 
         if (!user) {
             return res.status(404).json("User not found");
