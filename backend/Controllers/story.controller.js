@@ -3,18 +3,45 @@ import cloudinary from "../Lib/cloudinary.js";
 import { raw } from "express";
 export const addStory = async (req, res) => {
     try {
-        const { title, story, visitedDate, imageURL, visitedLocation } = req.body;
-        userId = req.userId;
+        const { title, story, visitedDate, visitedLocation } = req.body;
+        const userId = req.userId;
 
         // verify required field 
-        if (!title || !story || !visitedDate || !imageURL || !visitedLocation) {
+        if (!title || !story || !visitedDate || !visitedLocation) {
             return res.status(400).json({ success: false, message: "Please fill in all the required fields. " })
         }
+
+        // check file
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "Please upload an image."
+            });
+        }
+
+        // upload image to cloudinary
+        const uploadToCloudinary = () => {
+            return new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "myapp" },
+                    (error, result) => {
+                        if (error) {
+                            return res.status(500).json({ success: false, message: "Error occured during imaged upload. please try again" })
+                        }
+                        resolve(result);
+                    }
+                );
+
+                stream.end(req.file.buffer);
+            });
+        };
+
+        const result = await uploadToCloudinary();
 
         // convert visited date 
         const parsedVisitedDate = new Date(parseInt(visitedDate));
         const newStory = new Story({
-            visitedDate: parsedVisitedDate, title, story, imageURL, visitedLocation, userId
+            visitedDate: parsedVisitedDate, title, story, imageURL: result.secure_url, visitedLocation, userId
         })
         await newStory.save();
         res.status(201).json({ success: true, message: "Story saved successfully. " })
@@ -32,7 +59,8 @@ export const getAllStory = async (req, res) => {
     try {
         const userId = req.userId;
 
-        const allstory = (await Story.find({ userId })).sort({ isFavourite: -1 })
+        // const allstory = (await Story.find({ userId })).sort({ isFavourite: -1 })
+        const allstory = await Story.find({ userId }).sort({ isFavourite: -1 });
         res.status(200).json({ stories: allstory })
     } catch (err) {
         console.error("Error in getAll Story:", err); // for debugging
@@ -158,8 +186,10 @@ export const isFavouriteStory = async (req, res) => {
         }
 
         travelStory.isFavourite = isFavourite;
-        return res.status(200).json({ success: false, message: "TravelStory Updated successfully" })
-
+        await travelStory.save(); // ✅ ye missing tha
+       res
+      .status(200)
+      .json({ story: travelStory, message: "Updated successfully!" })
 
     } catch (err) {
         console.error("Error in isfavourite:", err); // for debugging
