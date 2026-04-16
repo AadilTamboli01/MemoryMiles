@@ -7,7 +7,7 @@ import upload from "../Lib/multer.js";
 const router = express.Router();
 
 
-router.post("/story", verifyUser,upload.single("image"), addStory);
+router.post("/story", verifyUser, addStory);
 router.put("/story/:id", verifyUser, editStory);
 // router.delete("/image", verifyUser, deleteImage);
 router.post("/image", upload.single("image"), imageUpload);

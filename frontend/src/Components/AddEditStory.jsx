@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import moment from "moment"
 import { FaPlus } from 'react-icons/fa'
 import { IoMdClose } from "react-icons/io";
 import { MdUpdate } from "react-icons/md";
@@ -6,6 +7,9 @@ import { MdDelete } from "react-icons/md";
 import DateSelector from './DateSelector';
 import ImageSelector from './ImageSelector';
 import TagInput from './TagInput';
+import axiosInstance from '../utils/axiosInstance';
+import { toast } from "react-toastify"
+import uploadImage from '../utils/uploadImage';
 
 const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
     const [visitedDate, setVisitedDate] = useState(null)
@@ -14,7 +18,64 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
     const [story, setStory] = useState("")
     const [visitedLocation, setVisitedLocation] = useState([])
 
-    const handleAddOrUpdateClick = () => { }
+    const [error, setError] = useState("")
+
+    const updateTravelStory = async () => { }
+
+    const addNewTravelStory = async () => {
+        try {
+            let imageURL = ""
+
+            if (storyImg) {
+                const imageUploadResponse = await uploadImage(storyImg)
+                imageURL = imageUploadResponse.imageURL || ""
+            }else{
+                  setError("Please upload the image file")
+            }
+
+            const response = await axiosInstance.post("/story/story", {
+                title,
+                story,
+                visitedLocation,
+                visitedDate: visitedDate ? moment(visitedDate).valueOf() : moment().valueOf(),
+                imageURL: imageURL || ""
+            })
+
+            if (response.data && response.data.story) {
+                toast.success("Story Created Successfully")
+
+                getAllTravelStory()
+                onClose()
+            }
+
+        } catch (error) {
+            console.log("Errir in the addneTravelstory ", error)
+        }
+    }
+    const handleAddOrUpdateClick = () => {
+        if (!title) {
+            setError("Please enter the title")
+            return
+        }
+
+        if (!story) {
+            setError("Please enter the story")
+            return
+        }
+        if (visitedLocation.length < 1) {
+            setError("Please enter the locations")
+            return
+        }
+
+        setError("")
+
+        if (type === "edit") {
+            updateTravelStory()
+        } else {
+            addNewTravelStory()
+        }
+
+    }
     const handleDeletedStoryImage = () => { }
 
     return (
@@ -26,7 +87,7 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
 
 
-                    {type === "edit" ? (<button className='cursor-pointer flex items-center gap-1 text-xs font-medium  bg-cyan-50 text-[#05b6d3] shadow-cyan-100 border border-cyan-100 hover:bg-[#05b6d3]  hover:text-white rounded-sm px-2 py-0.5' onClick={handleAddOrUpdateClick}> <FaPlus className='' />Add Story</button>) : (
+                    {type === "add" ? (<button className='cursor-pointer flex items-center gap-1 text-xs font-medium  bg-cyan-50 text-[#05b6d3] shadow-cyan-100 border border-cyan-100 hover:bg-[#05b6d3]  hover:text-white rounded-sm px-2 py-0.5' onClick={handleAddOrUpdateClick}> <FaPlus className='' />Add Story</button>) : (
                         <>
                             <button className='cursor-pointer flex items-center gap-1 text-xs font-medium  bg-cyan-50 text-[#05b6d3] shadow-cyan-100 border border-cyan-100 hover:bg-[#05b6d3]  hover:text-white rounded-sm px-2 py-0.5' onClick={handleAddOrUpdateClick}><MdUpdate className='text-lg' /> Update Story</button>
                             <button className='cursor-pointer flex items-center gap-1 text-xs font-medium  bg-rose-50 text-rose-500 shadow-cyan-100 border border-cyan-100 hover:bg-rose-500  hover:text-rose-50 rounded-sm px-2 py-0.5' onClick={handleAddOrUpdateClick}><MdDelete className='text-lg' /> Delete Story</button>
@@ -36,10 +97,17 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
 
                     <button className='text-xl text-slate-400 cursor-pointer mx-1 my-1' onClick={onClose}><IoMdClose /></button>
+
                 </div>
             </div>
 
+
+
+
             <div>
+                {error && (
+                    <p className="text-red-500 text-xs pt-2 text-right">{error}</p>
+                )}
                 <div className="flex flex-1 flex-col gap-2 pt-4">
                     <label className='input-label'>Title</label>
                     <input type="text" className='text-2xl text-slate-900 outline-none' value={title} onChange={(e) => { setTitle(e.target.value) }} placeholder='Once Opon A Time...' />

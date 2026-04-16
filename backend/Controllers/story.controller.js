@@ -3,48 +3,22 @@ import cloudinary from "../Lib/cloudinary.js";
 import { raw } from "express";
 export const addStory = async (req, res) => {
     try {
-        const { title, story, visitedDate, visitedLocation } = req.body;
+        const { title, story, visitedDate, imageURL, visitedLocation } = req.body;
         const userId = req.userId;
 
         // verify required field 
-        if (!title || !story || !visitedDate || !visitedLocation) {
+        if (!title || !story || !visitedDate, !imageURL || !visitedLocation) {
             return res.status(400).json({ success: false, message: "Please fill in all the required fields. " })
         }
 
-        // check file
-        if (!req.file) {
-            return res.status(400).json({
-                success: false,
-                message: "Please upload an image."
-            });
-        }
-
-        // upload image to cloudinary
-        const uploadToCloudinary = () => {
-            return new Promise((resolve, reject) => {
-                const stream = cloudinary.uploader.upload_stream(
-                    { folder: "myapp" },
-                    (error, result) => {
-                        if (error) {
-                            return res.status(500).json({ success: false, message: "Error occured during imaged upload. please try again" })
-                        }
-                        resolve(result);
-                    }
-                );
-
-                stream.end(req.file.buffer);
-            });
-        };
-
-        const result = await uploadToCloudinary();
 
         // convert visited date 
         const parsedVisitedDate = new Date(parseInt(visitedDate));
         const newStory = new Story({
-            visitedDate: parsedVisitedDate, title, story, imageURL: result.secure_url, visitedLocation, userId
+            visitedDate: parsedVisitedDate, title, story, imageURL, visitedLocation, userId
         })
         await newStory.save();
-        res.status(201).json({ success: true, message: "Story saved successfully. " })
+        res.status(201).json({ success: true, message: "Story saved successfully. ", story: newStory })
     } catch (err) {
         console.error("Error in addStory:", err); // for debugging
 
@@ -89,7 +63,7 @@ export const imageUpload = async (req, res) => {
 
                 return res.status(200).json({
                     message: "File uploaded successfully.",
-                    ImageURL: result.secure_url,
+                    imageURL: result.secure_url,
                 });
             }
         );
@@ -187,9 +161,9 @@ export const isFavouriteStory = async (req, res) => {
 
         travelStory.isFavourite = isFavourite;
         await travelStory.save(); // ✅ ye missing tha
-       res
-      .status(200)
-      .json({ story: travelStory, message: "Updated successfully!" })
+        res
+            .status(200)
+            .json({ story: travelStory, message: "Updated successfully!" })
 
     } catch (err) {
         console.error("Error in isfavourite:", err); // for debugging
