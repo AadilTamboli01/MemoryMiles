@@ -12,7 +12,7 @@ const ViewTravelStory = ({ onClose, storyInfo, onEditClick, onDeleteClick }) => 
                 <div>
                     <div className='flex items-center gap-3 bg-cyan-50/50 rounded-l-lg'>
                         <button className='btn-small' onClick={() => { onEditClick() }}><MdUpdate className='text-lg' /> Update Story</button>
-                        <button className='btn-small btn-delete' onClick={() => { onDeleteClick() }}><MdDelete className='text-lg' /> Delete Story</button>
+                        <button className='btn-small cursor-pointer btn-delete' onClick={() => { onDeleteClick() }}><MdDelete className='text-lg' /> Delete Story</button>
 
                         <button className='btn-small' onClick={() => { onClose() }}><IoMdClose /></button>
 
@@ -46,7 +46,7 @@ const ViewTravelStory = ({ onClose, storyInfo, onEditClick, onDeleteClick }) => 
                 <img src={storyInfo && storyInfo.imageURL} alt="story image"  className='w-full h-[300px] object-cover rounded-lg'/>
 
                 <div className="mt-4">
-                    <p className="text-sm text-slate-950 leading-6 text-justify whitespace-pre-line">{storyInfo.story}</p>
+                    <p className="text-sm text-slate-950 leading-6 text-justify whitespace-pre-line">{ storyInfo && storyInfo.story}</p>
                 </div>
 
             </div>

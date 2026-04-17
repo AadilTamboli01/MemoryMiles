@@ -2,7 +2,7 @@ import express from "express";
 
 import { verifyUser } from "../Lib/verifyUser.js";
 
-import { addStory, deleteStory, editStory, filterTravelStory, getAllStory, imageUpload, isFavouriteStory, searchStory } from "../Controllers/story.controller.js";
+import { addStory, deleteImage, deleteStory, editStory, filterTravelStory, getAllStory, imageUpload, isFavouriteStory, searchStory } from "../Controllers/story.controller.js";
 import upload from "../Lib/multer.js";
 const router = express.Router();
 
@@ -16,5 +16,6 @@ router.delete("/story/:id", verifyUser, deleteStory);
 router.patch("/likeStory/:id", verifyUser, isFavouriteStory);
 router.get("/search", verifyUser, searchStory);
 router.get("/filer", verifyUser, filterTravelStory);
+router.delete("/image", verifyUser, deleteImage);
 
 export default router;

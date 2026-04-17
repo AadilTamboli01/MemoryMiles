@@ -81,6 +81,40 @@ export const imageUpload = async (req, res) => {
     }
 }
 
+export const deleteImage = async (req, res) => {
+    try {
+        const { imageURL } = req.body;
+
+        if (!imageURL) {
+            return res.status(400).json({
+                message: "Image URL is required"
+            });
+        }
+
+        //  extract public_id from URL
+        const parts = imageURL.split("/");
+        const fileName = parts.pop(); // eab2wg2trwo0mxdchbte.jpg
+        const folderName = parts.pop(); // myapp
+
+        const public_id = `${folderName}/${fileName.split(".")[0]}`;
+
+        //  delete from cloudinary
+        const result = await cloudinary.uploader.destroy(public_id);
+
+        return res.status(200).json({
+            message: "Image deleted successfully",
+            result
+        });
+
+    } catch (err) {
+        console.error("Error in deleteImage:", err);
+
+        res.status(500).json({
+            message: "Something went wrong while deleting image"
+        });
+    }
+};
+
 export const editStory = async (req, res) => {
     try {
         const { id } = req.params;

@@ -20,7 +20,7 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
     const [visitedDate, setVisitedDate] = useState(storyInfo?.visitedDate || null)
     const [title, setTitle] = useState(storyInfo?.title || "")
-    const [storyImg, setStoryImg] = useState(storyInfo?.imageUrl || null)
+    const [storyImg, setStoryImg] = useState(storyInfo?.imageURL || null)
     const [story, setStory] = useState(storyInfo?.story || "")
     const [visitedLocation, setVisitedLocation] = useState(
         storyInfo?.visitedLocation || []
@@ -30,6 +30,10 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
     const updateTravelStory = async () => {
         const storyId = storyInfo._id;
+        if (!storyImg) {
+            setError("Please upload image file");
+            return;
+        }
 
         try {
             let imageUrl = ""
@@ -79,7 +83,7 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
                 setError(error.response.data.message)
             } else {
                 setError("Something went wrong! Please try again.")
-          
+
             }
         }
     }
@@ -139,7 +143,43 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
         }
 
     }
-    const handleDeletedStoryImage = () => { }
+    // const handleDeletedStoryImage = () => { }
+    const handleDeletedStoryImage = async () => {
+        // Deleting the image
+        const deleteImageResponse = await axiosInstance.delete(
+            "/story/image",
+            {
+                imageURL: storyInfo.imageURL
+            }
+        )
+
+        if (deleteImageResponse.data) {
+            const storyId = storyInfo._id
+
+            const postData = {
+                title,
+                story,
+                visitedLocation,
+                visitedDate: moment().valueOf(),
+                imageUrl: "",
+            }
+
+            // updating story
+
+            const response = await axiosInstance.put(
+                "/story/story/" + storyId,
+                postData
+            )
+
+            if (response.data) {
+                toast.success("Story image deleted successfully")
+
+                setStoryImg(null)
+
+                getAllTravelStory()
+            }
+        }
+    }
 
     return (
         <div className='relative'>
@@ -171,6 +211,7 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
                 {error && (
                     <p className="text-red-500 text-xs pt-2 text-right">{error}</p>
                 )}
+
                 <div className="flex flex-1 flex-col gap-2 pt-4">
                     <label className='input-label'>Title</label>
                     <input type="text" className='text-2xl text-slate-900 outline-none' value={title} onChange={(e) => { setTitle(e.target.value) }} placeholder='Once Opon A Time...' />

@@ -19,7 +19,7 @@ const ImageSelector = ({ image, setImage, handleDeleteImage }) => {
         }
     }
 
-    const  handleRemoveImage  = ()=>{
+    const handleRemoveImage = () => {
         setImage(null)
         handleDeleteImage()
     }
@@ -28,7 +28,7 @@ const ImageSelector = ({ image, setImage, handleDeleteImage }) => {
 
         if (typeof image === "string") {
             setpreviewURL(image);
-        
+
         } else if (image) {
             url = URL.createObjectURL(image);
             setpreviewURL(url);
@@ -55,7 +55,7 @@ const ImageSelector = ({ image, setImage, handleDeleteImage }) => {
                 (
                     <div className='w-full relative '>
                         <img src={previewURL} alt="Selected Image" className='w-full h-[300px] object-cover rounded-lg ' />
-                        <button className='btn-small cursor-pointer btn-delete absolute top-2 right-2' onClick={()=>{handleRemoveImage()}}><MdDelete className='text-xl'/></button>
+                        <button className='btn-small cursor-pointer btn-delete absolute top-2 right-2' onClick={() => { handleRemoveImage() }}><MdDelete className='text-xl' /></button>
                     </div>
                 )}
 

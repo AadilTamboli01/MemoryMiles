@@ -67,6 +67,49 @@ const Home = () => {
   }
 
 
+  //delete Story 
+  // const deleteTravelStory = async (data) => {
+  //   try {
+  //     const storyId = data._id;
+
+  //   } catch (error) {
+      
+  //   }
+  // }
+
+  const deleteTravelStory = async (data) => {
+    const storyId = data._id;
+
+  try {
+    // ✅ 1. Delete image from cloudinary (backend route)
+    if (data.imageURL) {
+      await axiosInstance.delete("/story/image", {
+        data: { imageURL: data.imageURL } // ⚠️ body me bhejna
+      
+      });
+    }
+
+    console.log("Image deleted Successfully")
+
+    // ✅ 2. Delete story from DB
+    const response = await axiosInstance.delete(`/story/story/${storyId}`);
+
+    if (response.data) {
+      toast.success("Story deleted successfully");
+
+      // modal close
+      setOpenViewModal({ isShown: false, data: null });
+
+      // refresh list
+      getAllStory();
+    }
+
+  } catch (error) {
+    console.log("Delete error:", error);
+    toast.error("Delete failed");
+  }
+};
+
   useEffect(() => {
     const fetchStories = async () => {
       try {
@@ -129,7 +172,7 @@ const Home = () => {
           setOpenViewModal((prevState) => ({ ...prevState, isShown: false }))
 
           handleEdit(openViewModal.data || null)
-        }} onDeleteClick={() => { }} />
+        }} onDeleteClick={() => { deleteTravelStory(openViewModal.data || null) }} />
 
       </Modal>
       <button className='w-16 h-16 flex items-center justify-center rounded-full bg-blue-400 hover:bg-cyan-400 fixed right-10 bottom-10 cursor-pointer' onClick={() => { setOpenAddEditModal({ isShown: true, type: "add", data: null }) }}><FaPlus className='text-lg text-white' /> </button>
