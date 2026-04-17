@@ -12,25 +12,88 @@ import { toast } from "react-toastify"
 import uploadImage from '../utils/uploadImage';
 
 const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
-    const [visitedDate, setVisitedDate] = useState(null)
-    const [title, setTitle] = useState("")
-    const [storyImg, setStoryImg] = useState(null)
-    const [story, setStory] = useState("")
-    const [visitedLocation, setVisitedLocation] = useState([])
+    // const [visitedDate, setVisitedDate] = useState(null)
+    // const [title, setTitle] = useState("")
+    // const [storyImg, setStoryImg] = useState(null)
+    // const [story, setStory] = useState("")
+    // const [visitedLocation, setVisitedLocation] = useState([])
+
+    const [visitedDate, setVisitedDate] = useState(storyInfo?.visitedDate || null)
+    const [title, setTitle] = useState(storyInfo?.title || "")
+    const [storyImg, setStoryImg] = useState(storyInfo?.imageUrl || null)
+    const [story, setStory] = useState(storyInfo?.story || "")
+    const [visitedLocation, setVisitedLocation] = useState(
+        storyInfo?.visitedLocation || []
+    )
 
     const [error, setError] = useState("")
 
-    const updateTravelStory = async () => { }
+    const updateTravelStory = async () => {
+        const storyId = storyInfo._id;
+
+        try {
+            let imageUrl = ""
+
+            let postData = {
+                title,
+                story,
+                imageURL: storyInfo.imageURL || "",
+                visitedLocation,
+                visitedDate: visitedDate
+                    ? moment(visitedDate).valueOf()
+                    : moment().valueOf(),
+            }
+
+            if (typeof storyImg === "object") {
+                // Upload new image
+                const imageUploadRes = await uploadImage(storyImg)
+
+                imageUrl = imageUploadRes.imageURL || ""
+
+                postData = {
+                    ...postData,
+                    imageURL: imageUrl,
+                }
+
+            }
+
+            const response = await axiosInstance.put(
+                "/story/story/" + storyId,
+                postData
+            )
+
+            if (response.data && response.data.story) {
+                toast.success("Story updated successfully!")
+
+                getAllTravelStory()
+
+                onClose()
+            }
+
+        } catch (error) {
+            if (
+                error.response &&
+                error.response.data &&
+                error.response.data.message
+            ) {
+                setError(error.response.data.message)
+            } else {
+                setError("Something went wrong! Please try again.")
+          
+            }
+        }
+    }
 
     const addNewTravelStory = async () => {
+
         try {
             let imageURL = ""
 
             if (storyImg) {
                 const imageUploadResponse = await uploadImage(storyImg)
                 imageURL = imageUploadResponse.imageURL || ""
-            }else{
-                  setError("Please upload the image file")
+            } else {
+                setError("Please upload the image file")
             }
 
             const response = await axiosInstance.post("/story/story", {
@@ -79,7 +142,7 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
     const handleDeletedStoryImage = () => { }
 
     return (
-        <div>
+        <div className='relative'>
             <div className='flex items-center justify-between '>
                 <h5 className='text-xl font-medium text-slate-700'>{type === "add" ? "Add Story" : "Update Story"}</h5>
 

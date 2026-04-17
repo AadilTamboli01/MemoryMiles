@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import { FaPlus } from "react-icons/fa";
 import Modal from 'react-modal';
 import AddEditStory from '../../Components/AddEditStory';
+import ViewTravelStory from './ViewTravelStory';
 
 
 const Home = () => {
@@ -16,6 +17,10 @@ const Home = () => {
     data: null
   })
 
+  const [openViewModal, setOpenViewModal] = useState({
+    isShown: false,
+    data: null
+  })
 
 
   const getAllStory = async () => {
@@ -29,8 +34,22 @@ const Home = () => {
       console.log("Something went wrong. please try again.", error);
     }
   };
-  const handleEdit = async (data) => { }
-  const handleViewStory = (data) => { }
+  const handleEdit = async (data) => {
+    setOpenAddEditModal({
+
+      isShown: true,
+      type: "edit",
+      data: data
+    })
+  }
+
+
+
+  const handleViewStory = (data) => {
+    setOpenViewModal({
+      isShown: true, data: data
+    })
+  }
   const updateIsFavouriteItem = async (data) => {
     try {
       const response = await axiosInstance.patch(`/story/likeStory/${data._id}`, {
@@ -101,6 +120,18 @@ const Home = () => {
 
       > <AddEditStory storyInfo={openAddEditModal.data} type={openAddEditModal.type} onClose={() => { setOpenAddEditModal({ data: null, type: "add", isShown: false }) }} getAllTravelStory={getAllStory} /> </Modal>
 
+
+      {/* view travel story  */}
+      <Modal isOpen={openViewModal.isShown} onRequestClose={() => { }} className="w-[80vw] md:w-[40%] h-[80vh] bg-slate-50 rounded-lg mx-auto mt-14 p-5 overflow-y-scroll scrollbar z-50"
+        appElement={document.getElementById("root")}
+      >
+        <ViewTravelStory onClose={() => { setOpenViewModal((prevState) => ({ ...prevState, isShown: false })) }} storyInfo={openViewModal.data || null} onEditClick={() => {
+          setOpenViewModal((prevState) => ({ ...prevState, isShown: false }))
+
+          handleEdit(openViewModal.data || null)
+        }} onDeleteClick={() => { }} />
+
+      </Modal>
       <button className='w-16 h-16 flex items-center justify-center rounded-full bg-blue-400 hover:bg-cyan-400 fixed right-10 bottom-10 cursor-pointer' onClick={() => { setOpenAddEditModal({ isShown: true, type: "add", data: null }) }}><FaPlus className='text-lg text-white' /> </button>
       <ToastContainer />
     </>

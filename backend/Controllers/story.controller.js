@@ -99,7 +99,7 @@ export const editStory = async (req, res) => {
         const travelStory = await Story.findOne({ _id: id, userId: userId });
 
         travelStory.title = title
-        travelStory.story = stroy
+        travelStory.story = story
         travelStory.visitedLocation = visitedLocation
         travelStory.imageURL = imageURL;
         travelStory.visitedDate = parsedVisitedDate;
