@@ -10,6 +10,8 @@ import ViewTravelStory from './ViewTravelStory';
 import EmptyCard from '../../Components/EmptyCard';
 import { DayPicker } from "react-day-picker";
 import moment from "moment"
+import FilterInfoTitle from '../../Components/FilterInfoTitle';
+import { getEmptyCardMessage } from '../../utils/helper';
 
 const Home = () => {
   const [allStories, setAllStory] = useState([])
@@ -143,7 +145,7 @@ const Home = () => {
 
   // filter story by date range 
   const filterStoriesByDate = async (day) => {
-      try {
+    try {
       const startDate = day.from ? moment(day.from).valueOf() : null
       const endDate = day.to ? moment(day.to).valueOf() : null
 
@@ -158,7 +160,7 @@ const Home = () => {
         }
       }
     } catch (error) {
-      console.log("Something went wrong. Please try again.",error)
+      console.log("Something went wrong. Please try again.", error)
     }
   }
 
@@ -167,6 +169,14 @@ const Home = () => {
     filterStoriesByDate(day)
 
   }
+
+  const resetFilter = () => {
+   
+    setDateRange({ from: null, to: null })
+    setFilterType("")
+    getAllStory()
+  }
+
 
 
   useEffect(() => {
@@ -188,6 +198,8 @@ const Home = () => {
     <>
       <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearchNote={onSearchStory} handleClearSearch={handleClearSearch} />
       <div className='container mx-auto py-10 '>
+
+        <FilterInfoTitle filterType={filterType} filterDate={dateRange} onClear={() => { resetFilter() }} />
         <div className="flex gap-7 ">
           <div className=' flex-1'>
             {allStories.length > 0 ? (
@@ -207,7 +219,7 @@ const Home = () => {
                   />)
                 })}
               </div>
-            ) : (<EmptyCard imageSource={"/images/pexels-karola-g-5706021.jpg"} message={"No memories here… let’s create some beautiful travel stories!"} createNewStory={() => { setOpenAddEditModal({ isShown: true, type: "add", data: null }) }} />)}
+            ) : (<EmptyCard imageSource={"/images/pexels-karola-g-5706021.jpg"} message={getEmptyCardMessage(filterType)} createNewStory={() => { setOpenAddEditModal({ isShown: true, type: "add", data: null }) }} />)}
           </div>
 
           <div className='w-[320px]'>

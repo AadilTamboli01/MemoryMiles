@@ -5,7 +5,7 @@ import { validateEmail } from '../../utils/helper.js';
 
 import axiosInstance from '../../utils/axiosInstance.js';
 import { useDispatch, useSelector } from 'react-redux';
-import { signInStart, signInSuccess } from '../../redux/slice/userSlice.js';
+import { signInFailure, signInStart, signInSuccess } from '../../redux/slice/userSlice.js';
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -37,8 +37,11 @@ const Login = () => {
       if (respose.data) {
         dispatch(signInSuccess(respose.data))
         navigate("/")
+      }else{
+         dispatch(signInFailure("An unexpected error occure"))
       }
     } catch (error) {
+       dispatch(signInFailure("An unexpected error occure"))
       // setError(error.message)
       if (error.response) {
         setError(error.response.data.message || error.response.data)
