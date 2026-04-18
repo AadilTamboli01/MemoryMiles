@@ -218,7 +218,7 @@ export const searchStory = async (req, res) => {
             return res.status(404).json("Query is Required");
         }
 
-        const searchResults = Story.find({ userId: userId, $or: [{ title: { $regex: query, $options: "i" } }, { story: { $regex: query, $options: "i" } }, { visitedLocation: { $regex: query, $options: "i" } }] }).sort({ isFavourite: -1 })
+        const searchResults = await Story.find({ userId: userId, $or: [{ title: { $regex: query, $options: "i" } }, { story: { $regex: query, $options: "i" } }, { visitedLocation: { $regex: query, $options: "i" } }] }).sort({ isFavourite: -1 })
         res.status(200).json({ success: true, stories: searchResults })
 
     } catch (err) {
@@ -236,10 +236,18 @@ export const filterTravelStory = async (req, res) => {
         const { startDate, endDate } = req.query;
         const userId = req.userId;
 
-        const start = new Date(parsInt(startDate))
-        const end = new Date(parsInt(endDate))
+         // Check if dates are provided
+        if (!startDate || !endDate) {
+            return res.status(400).json({
+                success: false,
+                message: "startDate and endDate are required"
+            });
+        }
 
-        const filteredStories = await Story({ userId: userId, visitedDate: { $gte: start, $lte: end } }).sort({ isFavourite: -1 })
+        const start = new Date(parseInt(startDate))
+        const end = new Date(parseInt(endDate))
+
+        const filteredStories = await Story.find({ userId: userId, visitedDate: { $gte: start, $lte: end } }).sort({ isFavourite: -1 })
 
         res.status(200).json({ success: true, stories: filteredStories })
     } catch (err) {

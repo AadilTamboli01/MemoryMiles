@@ -7,7 +7,9 @@ import { FaPlus } from "react-icons/fa";
 import Modal from 'react-modal';
 import AddEditStory from '../../Components/AddEditStory';
 import ViewTravelStory from './ViewTravelStory';
-
+import EmptyCard from '../../Components/EmptyCard';
+import { DayPicker } from "react-day-picker";
+import moment from "moment"
 
 const Home = () => {
   const [allStories, setAllStory] = useState([])
@@ -17,10 +19,17 @@ const Home = () => {
     data: null
   })
 
+  const [dateRange, setDateRange] = useState({ from: null, to: null });
+
+  const [searchQuery, setSearchQuery] = useState("")
+
   const [openViewModal, setOpenViewModal] = useState({
     isShown: false,
     data: null
   })
+
+  const [filterType, setFilterType] = useState("")
+
 
 
   const getAllStory = async () => {
@@ -73,42 +82,92 @@ const Home = () => {
   //     const storyId = data._id;
 
   //   } catch (error) {
-      
+
   //   }
   // }
 
   const deleteTravelStory = async (data) => {
     const storyId = data._id;
 
-  try {
-    // ✅ 1. Delete image from cloudinary (backend route)
-    if (data.imageURL) {
-      await axiosInstance.delete("/story/image", {
-        data: { imageURL: data.imageURL } // ⚠️ body me bhejna
-      
-      });
+    try {
+      //  1. Delete image from cloudinary (backend route)
+      if (data.imageURL) {
+        await axiosInstance.delete("/story/image", {
+          data: { imageURL: data.imageURL } // ⚠️ body me bhejna
+
+        });
+      }
+
+      console.log("Image deleted Successfully")
+
+      //  2. Delete story from DB
+      const response = await axiosInstance.delete(`/story/story/${storyId}`);
+
+      if (response.data) {
+        toast.success("Story deleted successfully");
+
+        // modal close
+        setOpenViewModal({ isShown: false, data: null });
+
+        // refresh list
+        getAllStory();
+      }
+
+    } catch (error) {
+      console.log("Delete error:", error);
+      toast.error("Delete failed");
     }
+  };
 
-    console.log("Image deleted Successfully")
+  const onSearchStory = async (query) => {
 
-    // ✅ 2. Delete story from DB
-    const response = await axiosInstance.delete(`/story/story/${storyId}`);
-
-    if (response.data) {
-      toast.success("Story deleted successfully");
-
-      // modal close
-      setOpenViewModal({ isShown: false, data: null });
-
-      // refresh list
-      getAllStory();
+    try {
+      const response = await axiosInstance.get("/story/search", {
+        params: {
+          query: query
+        }
+      })
+      if (response.data && response.data.stories) {
+        setFilterType("search")
+        setAllStory(response.data.stories);
+      }
+    } catch (error) {
+      console.log("Error occured in the onsearch Story ", error.message)
     }
-
-  } catch (error) {
-    console.log("Delete error:", error);
-    toast.error("Delete failed");
   }
-};
+
+  const handleClearSearch = () => {
+    setFilterType("")
+    getAllStory()
+  }
+
+  // filter story by date range 
+  const filterStoriesByDate = async (day) => {
+      try {
+      const startDate = day.from ? moment(day.from).valueOf() : null
+      const endDate = day.to ? moment(day.to).valueOf() : null
+
+      if (startDate && endDate) {
+        const response = await axiosInstance.get("/story/filter", {
+          params: { startDate, endDate },
+        })
+
+        if (response.data && response.data.stories) {
+          setFilterType("date")
+          setAllStory(response.data.stories)
+        }
+      }
+    } catch (error) {
+      console.log("Something went wrong. Please try again.",error)
+    }
+  }
+
+  const handleDayClick = (day) => {
+    setDateRange(day);
+    filterStoriesByDate(day)
+
+  }
+
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -127,7 +186,7 @@ const Home = () => {
   }, []);
   return (
     <>
-      <Navbar />
+      <Navbar searchQuery={searchQuery} setSearchQuery={setSearchQuery} onSearchNote={onSearchStory} handleClearSearch={handleClearSearch} />
       <div className='container mx-auto py-10 '>
         <div className="flex gap-7 ">
           <div className=' flex-1'>
@@ -148,10 +207,19 @@ const Home = () => {
                   />)
                 })}
               </div>
-            ) : (<div>Empty Card here </div>)}
+            ) : (<EmptyCard imageSource={"/images/pexels-karola-g-5706021.jpg"} message={"No memories here… let’s create some beautiful travel stories!"} createNewStory={() => { setOpenAddEditModal({ isShown: true, type: "add", data: null }) }} />)}
           </div>
 
-          <div className='w-[320px]'></div>
+          <div className='w-[320px]'>
+
+            <div className='bg-white border border-slate-200 shadow-lg shadow-slate-200/50 rounded-lg '>
+              <div className='p-3'>
+
+                <DayPicker captionLayout='dropdown' mode="range" selected={dateRange} onSelect={handleDayClick} pagedNavigation />
+
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

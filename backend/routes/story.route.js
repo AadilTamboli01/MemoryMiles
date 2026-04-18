@@ -15,7 +15,7 @@ router.get("/allstory", verifyUser, getAllStory);
 router.delete("/story/:id", verifyUser, deleteStory);
 router.patch("/likeStory/:id", verifyUser, isFavouriteStory);
 router.get("/search", verifyUser, searchStory);
-router.get("/filer", verifyUser, filterTravelStory);
+router.get("/filter", verifyUser, filterTravelStory);
 router.delete("/image", verifyUser, deleteImage);
 
 export default router;
