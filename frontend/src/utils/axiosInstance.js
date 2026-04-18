@@ -1,5 +1,6 @@
 import axios from "axios"
-const BASE_URL = "http://localhost:3000/api";
+// https://memorymiles-uzac.onrender.com
+const BASE_URL = "https://memorymiles-uzac.onrender.com/api";
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
