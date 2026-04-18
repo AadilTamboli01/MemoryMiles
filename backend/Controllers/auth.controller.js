@@ -27,7 +27,7 @@ export const signup = async (req, res) => {
 
         res.status(201).json({ success: true, message: "Account created successfully. You can now log in." });
     } catch (err) {
-        console.error("Error in signup:", err); // for debugging
+      
 
         res.status(500).json({
             success: false,
@@ -62,7 +62,7 @@ export const login = async (req, res) => {
         const { password: pass, ...rest } = user._doc
         res.status(200).json(rest);
     } catch (err) {
-        console.error("Error in Login:", err); // for debugging
+      
 
         res.status(500).json({
             success: false,

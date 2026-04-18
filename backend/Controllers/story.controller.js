@@ -20,7 +20,7 @@ export const addStory = async (req, res) => {
         await newStory.save();
         res.status(201).json({ success: true, message: "Story saved successfully. ", story: newStory })
     } catch (err) {
-        console.error("Error in addStory:", err); // for debugging
+      
 
         res.status(500).json({
             success: false,
@@ -37,8 +37,7 @@ export const getAllStory = async (req, res) => {
         const allstory = await Story.find({ userId }).sort({ isFavourite: -1 });
         res.status(200).json({ stories: allstory })
     } catch (err) {
-        console.error("Error in getAll Story:", err); // for debugging
-
+        
         res.status(500).json({
             success: false,
             message: "Something went wrong. Please try again later."
@@ -72,7 +71,7 @@ export const imageUpload = async (req, res) => {
         stream.end(req.file.buffer);
 
     } catch (err) {
-        console.error("Error in imageUpload:", err); // for debugging
+       
 
         res.status(500).json({
             success: false,
@@ -107,7 +106,7 @@ export const deleteImage = async (req, res) => {
         });
 
     } catch (err) {
-        console.error("Error in deleteImage:", err);
+      
 
         res.status(500).json({
             message: "Something went wrong while deleting image"
@@ -141,7 +140,7 @@ export const editStory = async (req, res) => {
         await travelStory.save()
         res.status(200).json({ success: true, story: travelStory, message: "story updated Successfully." })
     } catch (err) {
-        console.error("Error in editStory:", err); // for debugging
+      
 
         res.status(500).json({
             success: false,
@@ -173,7 +172,7 @@ export const deleteStory = async (req, res) => {
 
         return res.status(200).json({ success: true, message: "Story deleted Successfully" })
     } catch (err) {
-        console.error("Error in deleteStory:", err); // for debugging
+       
 
         res.status(500).json({
             success: false,
@@ -200,7 +199,7 @@ export const isFavouriteStory = async (req, res) => {
             .json({ story: travelStory, message: "Updated successfully!" })
 
     } catch (err) {
-        console.error("Error in isfavourite:", err); // for debugging
+     
 
         res.status(500).json({
             success: false,
@@ -222,7 +221,7 @@ export const searchStory = async (req, res) => {
         res.status(200).json({ success: true, stories: searchResults })
 
     } catch (err) {
-        console.error("Error in searchHistory:", err); // for debugging
+       
 
         res.status(500).json({
             success: false,
@@ -251,7 +250,7 @@ export const filterTravelStory = async (req, res) => {
 
         res.status(200).json({ success: true, stories: filteredStories })
     } catch (err) {
-        console.error("Error in filterStory:", err); // for debugging
+     
 
         res.status(500).json({
             success: false,

@@ -12,11 +12,7 @@ import { toast } from "react-toastify"
 import uploadImage from '../utils/uploadImage';
 
 const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
-    // const [visitedDate, setVisitedDate] = useState(null)
-    // const [title, setTitle] = useState("")
-    // const [storyImg, setStoryImg] = useState(null)
-    // const [story, setStory] = useState("")
-    // const [visitedLocation, setVisitedLocation] = useState([])
+
 
     const [visitedDate, setVisitedDate] = useState(storyInfo?.visitedDate || null)
     const [title, setTitle] = useState(storyInfo?.title || "")
@@ -116,7 +112,10 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
             }
 
         } catch (error) {
-            console.log("Errir in the addneTravelstory ", error)
+            // backend error message
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            }
         }
     }
     const handleAddOrUpdateClick = () => {
@@ -143,94 +142,114 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
         }
 
     }
-    // const handleDeletedStoryImage = () => { }
+
     const handleDeletedStoryImage = async () => {
-        // Deleting the image
-        const deleteImageResponse = await axiosInstance.delete(
-            "/story/image",
-            {
-                imageURL: storyInfo.imageURL
-            }
-        )
-
-        if (deleteImageResponse.data) {
-            const storyId = storyInfo._id
-
-            const postData = {
-                title,
-                story,
-                visitedLocation,
-                visitedDate: moment().valueOf(),
-                imageUrl: "",
-            }
-
-            // updating story
-
-            const response = await axiosInstance.put(
-                "/story/story/" + storyId,
-                postData
-            )
-
-            if (response.data) {
-                toast.success("Story image deleted successfully")
-
-                setStoryImg(null)
-
-                getAllTravelStory()
-            }
-        }
+        setStoryImg(null);
     }
 
     return (
-        <div className='relative'>
-            <div className='flex items-center justify-between '>
-                <h5 className='text-xl font-medium text-slate-700'>{type === "add" ? "Add Story" : "Update Story"}</h5>
+        <div className='relative mt-3'>
 
-                <div className='flex items-center gap-3 bg-cyan-50/50 p-2 rounded-l-lg '>
+            {/* Headers */}
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
 
+                <h5 className='text-lg sm:text-xl font-medium text-slate-700'>
+                    {type === "add" ? "Add Story" : "Update Story"}
+                </h5>
 
+                <div className='flex flex-wrap items-center gap-2 sm:gap-3 bg-cyan-50/50 p-2 rounded-lg'>
 
-                    {type === "add" ? (<button className='cursor-pointer flex items-center gap-1 text-xs font-medium  bg-cyan-50 text-[#05b6d3] shadow-cyan-100 border border-cyan-100 hover:bg-[#05b6d3]  hover:text-white rounded-sm px-2 py-0.5' onClick={handleAddOrUpdateClick}> <FaPlus className='' />Add Story</button>) : (
+                    {type === "add" ? (
+                        <button
+                            className='flex items-center gap-1 text-xs sm:text-sm font-medium bg-cyan-50 text-[#05b6d3] border border-cyan-100 hover:bg-[#05b6d3] hover:text-white rounded-sm px-2 py-1'
+                            onClick={handleAddOrUpdateClick}
+                        >
+                            <FaPlus />
+                            <span>Add</span>
+                        </button>
+                    ) : (
                         <>
-                            <button className='cursor-pointer flex items-center gap-1 text-xs font-medium  bg-cyan-50 text-[#05b6d3] shadow-cyan-100 border border-cyan-100 hover:bg-[#05b6d3]  hover:text-white rounded-sm px-2 py-0.5' onClick={handleAddOrUpdateClick}><MdUpdate className='text-lg' /> Update Story</button>
-                            <button className='cursor-pointer flex items-center gap-1 text-xs font-medium  bg-rose-50 text-rose-500 shadow-cyan-100 border border-cyan-100 hover:bg-rose-500  hover:text-rose-50 rounded-sm px-2 py-0.5' onClick={handleAddOrUpdateClick}><MdDelete className='text-lg' /> Delete Story</button>
-                        </>)}
+                            <button
+                                className='flex items-center gap-1 text-xs sm:text-sm font-medium bg-cyan-50 text-[#05b6d3] border border-cyan-100 hover:bg-[#05b6d3] hover:text-white rounded-sm px-2 py-1'
+                                onClick={handleAddOrUpdateClick}
+                            >
+                                <MdUpdate className='text-base' />
+                                <span className='hidden sm:inline'>Update</span>
+                            </button>
 
+                            <button
+                                className='flex items-center gap-1 text-xs sm:text-sm font-medium bg-rose-50 text-rose-500 border border-rose-100 hover:bg-rose-500 hover:text-white rounded-sm px-2 py-1'
+                                onClick={handleAddOrUpdateClick}
+                            >
+                                <MdDelete className='text-base' />
+                                <span className='hidden sm:inline'>Delete</span>
+                            </button>
+                        </>
+                    )}
 
-
-
-                    <button className='text-xl text-slate-400 cursor-pointer mx-1 my-1' onClick={onClose}><IoMdClose /></button>
-
+                    <button
+                        className='text-lg sm:text-xl text-slate-400 cursor-pointer'
+                        onClick={onClose}
+                    >
+                        <IoMdClose />
+                    </button>
                 </div>
             </div>
 
+            {/* Error */}
+            {error && (
+                <p className="text-red-500 text-xs pt-2 text-right">{error}</p>
+            )}
 
+            {/* Form */}
+            <div className="flex flex-col gap-4 pt-4">
 
-
-            <div>
-                {error && (
-                    <p className="text-red-500 text-xs pt-2 text-right">{error}</p>
-                )}
-
-                <div className="flex flex-1 flex-col gap-2 pt-4">
+                {/* Title */}
+                <div className="flex flex-col gap-1">
                     <label className='input-label'>Title</label>
-                    <input type="text" className='text-2xl text-slate-900 outline-none' value={title} onChange={(e) => { setTitle(e.target.value) }} placeholder='Once Opon A Time...' />
-
-                    <div>
-                        <DateSelector date={visitedDate} setDate={setVisitedDate} className="text-lg " />
-                    </div>
-                    <ImageSelector image={storyImg} setImage={setStoryImg} handleDeleteImage={handleDeletedStoryImage} />
-                    <div className='flex flex-col gap-2 mt-4 '>
-
-                        <label className="input-label">Story</label>
-                        <textarea type="text" className='text-sm text-slate-950  outline-none bg-slate-100 p-2  rounded-sm' placeholder='Your Story' rows={10} value={story} onChange={(e) => { setStory(e.target.value) }} />
-                    </div>
-                    <div className="pt-3 ">
-                        <label className="input-label">VISITED LOCATION</label>
-
-                        <TagInput tags={visitedLocation} setTags={setVisitedLocation} />
-                    </div>
+                    <input
+                        type="text"
+                        className='text-lg sm:text-2xl text-slate-900 outline-none w-full'
+                        value={title}
+                        onChange={(e) => { setTitle(e.target.value) }}
+                        placeholder='Once Upon A Time...'
+                    />
                 </div>
+
+                {/* Date */}
+                <div>
+                    <DateSelector
+                        date={visitedDate}
+                        setDate={setVisitedDate}
+                        className="text-base sm:text-lg"
+                    />
+                </div>
+
+                {/* Image */}
+                <ImageSelector
+                    image={storyImg}
+                    setImage={setStoryImg}
+                    handleDeleteImage={handleDeletedStoryImage}
+                />
+
+                {/* Story */}
+                <div className='flex flex-col gap-2'>
+                    <label className="input-label">Story</label>
+                    <textarea
+                        className='text-sm sm:text-base text-slate-950 outline-none bg-slate-100 p-3 rounded-md w-full'
+                        placeholder='Your Story'
+                        rows={8}
+                        value={story}
+                        onChange={(e) => { setStory(e.target.value) }}
+                    />
+                </div>
+
+                {/* Location */}
+                <div className="pt-2">
+                    <label className="input-label">VISITED LOCATION</label>
+                    <TagInput tags={visitedLocation} setTags={setVisitedLocation} />
+                </div>
+
             </div>
         </div>
     )

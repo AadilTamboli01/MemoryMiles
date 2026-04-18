@@ -34,16 +34,34 @@ const Navbar = ({ searchQuery, setSearchQuery, onSearchNote, handleClearSearch }
 
 
     return (
+        <div className='bg-white sticky top-0 z-10 shadow-sm'>
 
-        <div className='bg-white flex items-center justify-between drop-shadow sticky top-0  z-10  py-2 px-10'>
-            <Link to={"/"}>
-                <h1 className='font-bold text-2xl flex flex-wrap'>
-                    <span className='text-blue-400'>Memory</span ><span className='text-blue-800'>Miles</span>
-                </h1>
-            </Link>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
 
-            <SearchBar value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value) }} handleSearch={handleSearch} onClearSearch={onClearSearch} />
-            <Profile onLogout={onLogout} />
+                {/* Logo */}
+                <Link to={"/"}>
+                    <h1 className='font-bold text-xl sm:text-2xl flex'>
+                        <span className='text-blue-400'>Memory</span>
+                        <span className='text-blue-800'>Miles</span>
+                    </h1>
+                </Link>
+
+                {/* Search Bar */}
+                <div className='w-full sm:flex-1 sm:px-4'>
+                    <SearchBar
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value) }}
+                        handleSearch={handleSearch}
+                        onClearSearch={onClearSearch}
+                    />
+                </div>
+
+                {/* Profile */}
+                <div className='flex justify-end sm:justify-normal'>
+                    <Profile onLogout={onLogout} />
+                </div>
+
+            </div>
         </div>
     )
 }

@@ -11,7 +11,7 @@ export const getUser = async (req, res) => {
         res.status(200).json({ success: true, data: user });
 
     } catch (err) {
-        console.error("Error in getUser ", err); // for debugging
+
 
         res.status(500).json({
             success: false,
@@ -35,6 +35,9 @@ export const signout = async (req, res) => {
         });
 
     } catch (error) {
-
+        res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later."
+        });
     }
 }
