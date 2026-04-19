@@ -14,7 +14,7 @@ const ViewTravelStory = ({ onClose, storyInfo, onEditClick, onDeleteClick }) => 
                 <div className='flex flex-wrap items-center gap-2 sm:gap-3 bg-cyan-50/50 rounded-lg p-2'>
 
                     <button
-                        className='btn-small flex items-center gap-1'
+                        className='btn-small cursor-pointer flex items-center gap-1'
                         onClick={() => { onEditClick() }}
                     >
                         <MdUpdate className='text-base sm:text-lg' />
@@ -22,7 +22,7 @@ const ViewTravelStory = ({ onClose, storyInfo, onEditClick, onDeleteClick }) => 
                     </button>
 
                     <button
-                        className='btn-small btn-delete flex items-center gap-1'
+                        className='btn-small cursor-pointer btn-delete flex items-center gap-1'
                         onClick={() => { onDeleteClick() }}
                     >
                         <MdDelete className='text-base sm:text-lg' />
