@@ -262,11 +262,11 @@ const Home = () => {
 
       {/* ADD / EDIT MODAL */}
       <Modal
-        isOpen={openAddEditModal.isShown}
-        onRequestClose={() => { }}
-        appElement={document.getElementById("root")}
-        overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-start justify-center  px-4 pt-6 pb-4"
-        className="w-[95vw] sm:w-[80vw] md:w-[65vw] lg:w-[45vw] xl:w-[40vw] max-h-[90vh] bg-slate-50 rounded-lg p-0 overflow-hidden outline-none    px-4 pt-6 pb-4">
+       isOpen={openAddEditModal.isShown}
+  onRequestClose={() => { }}
+  appElement={document.getElementById("root")}
+  overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-start justify-center px-4 pt-6 pb-4"
+  className="w-full sm:w-[80vw] md:w-[65vw] lg:w-[45vw] xl:w-[40vw] h-[88vh] bg-slate-50 rounded-xl p-0 overflow-hidden outline-none shadow-xl flex flex-col">
         <AddEditStory
           storyInfo={openAddEditModal.data}
           type={openAddEditModal.type}

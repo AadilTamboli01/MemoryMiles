@@ -67,7 +67,7 @@ const TagInput = ({ tags, setTags }) => {
                     className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-md border border-cyan-500 hover:bg-cyan-500 transition"
                     onClick={addNewLocation}
                 >
-                    <IoMdAdd className="text-xl sm:text-2xl text-cyan-500 hover:text-white" />
+                    <IoMdAdd className="text-xl sm:text-2xl cursor cursor-pointer text-cyan-500 hover:text-white" />
                 </button>
 
             </div>

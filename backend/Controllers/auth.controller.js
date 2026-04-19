@@ -21,13 +21,14 @@ export const signup = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,      // JS se access nahi hoga (secure)
-            secure: true,        // sirf HTTPS me chalega
+            secure: true,
+            sameSite: "none",     // sirf HTTPS me chalega
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
 
         res.status(201).json({ success: true, message: "Account created successfully. You can now log in." });
     } catch (err) {
-      
+
 
         res.status(500).json({
             success: false,
@@ -56,13 +57,14 @@ export const login = async (req, res) => {
 
         res.cookie("token", token, {
             httpOnly: true,      // JS se access nahi hoga (secure)
-            secure: true,        // sirf HTTPS me chalega
+            secure: true,
+            sameSite: "none",     // sirf HTTPS me chalega
             maxAge: 24 * 60 * 60 * 1000 // 1 day
         });
         const { password: pass, ...rest } = user._doc
         res.status(200).json(rest);
     } catch (err) {
-      
+
 
         res.status(500).json({
             success: false,

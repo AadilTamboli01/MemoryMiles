@@ -10,7 +10,8 @@ const uploadImage = async (imageFile) => {
             headers: {
                 // headers for file upload
                 "Content-Type": "multipart/form-data"
-            }
+            },
+            timeout: 60000
         })
         return response.data;
     } catch (error) {
