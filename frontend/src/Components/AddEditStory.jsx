@@ -1,3 +1,5 @@
+
+
 import React, { useState } from 'react'
 import moment from "moment"
 import { FaPlus } from 'react-icons/fa'
@@ -13,7 +15,6 @@ import uploadImage from '../utils/uploadImage';
 
 const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
-
     const [visitedDate, setVisitedDate] = useState(storyInfo?.visitedDate || null)
     const [title, setTitle] = useState(storyInfo?.title || "")
     const [storyImg, setStoryImg] = useState(storyInfo?.imageURL || null)
@@ -21,7 +22,6 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
     const [visitedLocation, setVisitedLocation] = useState(
         storyInfo?.visitedLocation || []
     )
-
     const [error, setError] = useState("")
 
     const updateTravelStory = async () => {
@@ -33,7 +33,6 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
         try {
             let imageUrl = ""
-
             let postData = {
                 title,
                 story,
@@ -45,16 +44,9 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
             }
 
             if (typeof storyImg === "object") {
-                // Upload new image
                 const imageUploadRes = await uploadImage(storyImg)
-
                 imageUrl = imageUploadRes.imageURL || ""
-
-                postData = {
-                    ...postData,
-                    imageURL: imageUrl,
-                }
-
+                postData = { ...postData, imageURL: imageUrl }
             }
 
             const response = await axiosInstance.put(
@@ -64,28 +56,20 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
             if (response.data && response.data.story) {
                 toast.success("Story updated successfully!")
-
                 getAllTravelStory()
-
                 onClose()
             }
 
         } catch (error) {
-            if (
-                error.response &&
-                error.response.data &&
-                error.response.data.message
-            ) {
+            if (error.response && error.response.data && error.response.data.message) {
                 setError(error.response.data.message)
             } else {
                 setError("Something went wrong! Please try again.")
-
             }
         }
     }
 
     const addNewTravelStory = async () => {
-
         try {
             let imageURL = ""
 
@@ -106,41 +90,23 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 
             if (response.data && response.data.story) {
                 toast.success("Story Created Successfully")
-
                 getAllTravelStory()
                 onClose()
             }
 
         } catch (error) {
-            // backend error message
             if (error.response && error.response.data && error.response.data.message) {
                 toast.error(error.response.data.message);
             }
         }
     }
+
     const handleAddOrUpdateClick = () => {
-        if (!title) {
-            setError("Please enter the title")
-            return
-        }
-
-        if (!story) {
-            setError("Please enter the story")
-            return
-        }
-        if (visitedLocation.length < 1) {
-            setError("Please enter the locations")
-            return
-        }
-
+        if (!title) { setError("Please enter the title"); return }
+        if (!story) { setError("Please enter the story"); return }
+        if (visitedLocation.length < 1) { setError("Please enter the locations"); return }
         setError("")
-
-        if (type === "edit") {
-            updateTravelStory()
-        } else {
-            addNewTravelStory()
-        }
-
+        if (type === "edit") { updateTravelStory() } else { addNewTravelStory() }
     }
 
     const handleDeletedStoryImage = async () => {
@@ -148,16 +114,16 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
     }
 
     return (
-        <div className='relative mt-3'>
+        <div className='relative mt-2'>
 
-            {/* Headers */}
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3'>
+            {/* Headers — sticky so always visible while scrolling */}
+            <div className='flex items-center justify-between gap-2 sticky top-0 bg-slate-50 z-10 py-2 border-b border-slate-100'>
 
-                <h5 className='text-lg sm:text-xl font-medium text-slate-700'>
+                <h5 className='text-sm sm:text-xl font-medium text-slate-700 truncate max-w-[130px] sm:max-w-none'>
                     {type === "add" ? "Add Story" : "Update Story"}
                 </h5>
 
-                <div className='flex flex-wrap items-center gap-2 sm:gap-3 bg-cyan-50/50 p-2 rounded-lg'>
+                <div className='flex items-center gap-1 sm:gap-2 bg-cyan-50/50 p-1.5 sm:p-2 rounded-lg shrink-0'>
 
                     {type === "add" ? (
                         <button
@@ -256,3 +222,4 @@ const AddEditStory = ({ storyInfo, type, onClose, getAllTravelStory }) => {
 }
 
 export default AddEditStory
+

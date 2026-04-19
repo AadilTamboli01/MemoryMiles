@@ -57,7 +57,7 @@ const Navbar = ({ searchQuery, setSearchQuery, onSearchNote, handleClearSearch }
                 </div>
 
                 {/* Profile */}
-                <div className='flex justify-end sm:justify-normal'>
+                <div className='flex justify-end sm:justify-normal z-10'>
                     <Profile onLogout={onLogout} />
                 </div>
 

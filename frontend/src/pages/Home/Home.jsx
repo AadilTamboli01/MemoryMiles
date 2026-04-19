@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react'
 import Navbar from '../../Components/Navbar'
 import axiosInstance from '../../utils/axiosInstance'
@@ -194,7 +195,7 @@ const Home = () => {
         handleClearSearch={handleClearSearch}
       />
 
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6'>
 
         <FilterInfoTitle
           filterType={filterType}
@@ -203,12 +204,12 @@ const Home = () => {
         />
 
         {/* MAIN LAYOUT */}
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
 
           {/* LEFT SIDE (Stories) */}
-          <div className='flex-1'>
+          <div className='flex-1 min-w-0'>
             {allStories.length > 0 ? (
-              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5'>
                 {allStories.map((item) => {
                   return (
                     <TravelStoryCard
@@ -242,9 +243,9 @@ const Home = () => {
           </div>
 
           {/* RIGHT SIDE (Calendar) */}
-          <div className='w-full lg:w-[320px]'>
+          <div className='w-full lg:w-[300px] xl:w-[320px] shrink-0'>
             <div className='bg-white border border-slate-200 shadow-md rounded-lg'>
-              <div className='p-3'>
+              <div className='p-2 sm:p-3 overflow-x-auto'>
                 <DayPicker
                   captionLayout='dropdown'
                   mode="range"
@@ -264,8 +265,8 @@ const Home = () => {
         isOpen={openAddEditModal.isShown}
         onRequestClose={() => { }}
         appElement={document.getElementById("root")}
-        className="w-[95vw] sm:w-[85vw] md:w-[60vw] lg:w-[40vw] h-[85vh] bg-slate-50 rounded-lg mx-auto mt-10 p-4 sm:p-5 overflow-y-auto z-50"
-      >
+        overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-start justify-center  px-4 pt-6 pb-4"
+        className="w-[95vw] sm:w-[80vw] md:w-[65vw] lg:w-[45vw] xl:w-[40vw] max-h-[90vh] bg-slate-50 rounded-lg p-0 overflow-hidden outline-none    px-4 pt-6 pb-4">
         <AddEditStory
           storyInfo={openAddEditModal.data}
           type={openAddEditModal.type}
@@ -281,7 +282,8 @@ const Home = () => {
         isOpen={openViewModal.isShown}
         onRequestClose={() => { }}
         appElement={document.getElementById("root")}
-        className="w-[95vw] sm:w-[85vw] md:w-[60vw] lg:w-[40vw] h-[85vh] bg-slate-50 rounded-lg mx-auto mt-10 p-4 sm:p-5 overflow-y-auto z-50"
+        overlayClassName="fixed inset-0 bg-black/40 z-50 flex items-start justify-center px-4 pt-6 pb-4"
+        className="w-[95vw] sm:w-[80vw] md:w-[65vw] lg:w-[45vw] xl:w-[40vw] max-h-[90vh] bg-slate-50 rounded-lg p-4 sm:p-5 overflow-y-auto outline-none  px-4 pt-6 pb-4"
       >
         <ViewTravelStory
           onClose={() => {
@@ -306,7 +308,7 @@ const Home = () => {
 
       {/* FLOAT BUTTON */}
       <button
-        className='w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center rounded-full bg-blue-400 hover:bg-cyan-400 fixed right-4 sm:right-8 bottom-4 sm:bottom-8 cursor-pointer shadow-lg'
+        className='w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-full bg-blue-400 hover:bg-cyan-400 fixed right-4 sm:right-6 bottom-4 sm:bottom-6 cursor-pointer shadow-lg'
         onClick={() => {
           setOpenAddEditModal({
             isShown: true,
@@ -315,7 +317,7 @@ const Home = () => {
           })
         }}
       >
-        <FaPlus className='text-base sm:text-lg text-white' />
+        <FaPlus className='text-sm sm:text-base text-white' />
       </button>
 
       <ToastContainer />
@@ -324,3 +326,8 @@ const Home = () => {
 }
 
 export default Home
+
+
+
+
+

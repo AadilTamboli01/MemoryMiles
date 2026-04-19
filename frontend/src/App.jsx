@@ -9,7 +9,7 @@ import PrivateRoute from './Components/PrivateRoute'
 
 const App = () => {
   return (
-    <div className='min-h-screen w-full bg-slate-50 px-3 sm:px-6 md:px-10 lg:px-16'>
+    <div className='min-h-screen w-full bg-slate-50 px-2 sm:px-4 md:px-8 lg:px-12 xl:px-16'>
       <Routes>
 
         <Route element={<PrivateRoute />}>
